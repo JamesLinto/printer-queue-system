@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printer Spooler System - Queue Data Structure</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 650px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: #003366; font-size: 24px; text-align: center; }
+        p.desc { font-size: 14px; color: #666; text-align: center; margin-bottom: 25px; }
+        .form-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        input { flex: 1; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; background: #003366; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #002244; }
+        button.process { background: #d9534f; margin-top: 10px; width: 100%; }
+        button.process:hover { background: #c9302c; }
+        .stats { background: #eef2f7; padding: 15px; border-radius: 4px; margin-top: 20px; display: flex; justify-content: space-around; text-align: center; }
+        .stats p { margin: 0; font-weight: bold; font-size: 14px; }
+        .stats span { display: block; font-size: 18px; color: #003366; margin-top: 5px; }
+        ul { list-style-type: none; padding: 0; margin-top: 15px; max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; }
+        li { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        li:nth-child(odd) { background: #fafafa; }
+        .footer { text-align: center; font-size: 12px; color: #aaa; margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Printer Spooler System</h1>
+    <p class="desc">FIFO Queue Data Structure Demonstration</p>
+
+    <div class="form-group">
+        <input type="text" id="docNameInput" placeholder="Enter document name (e.g. Report.pdf)">
+        <button onclick="addJob()">Enqueue Job</button>
+    </div>
+
+    <button class="process" onclick="processJob()">Process Next Job (Dequeue)</button>
+
+    <div class="stats">
+        <div>
+            <p>Queue Status</p>
+            <span id="statusText">Active</span>
+        </div>
+        <div>
+            <p>Pending Jobs</p>
+            <span id="count">0</span>
+        </div>
+    </div>
+
+    <h3>Current Print Queue (FIFO Line):</h3>
+    <ul id="jobList">
+        <li style="color: #888; justify-content: center;">No print jobs in queue.</li>
+    </ul>
+
+    <div class="footer">Data Structures Queue Project</div>
+</div>
+
+<script>
+    let printQueue = [];
+    let nextJobId = 1;
+
+    function addJob() {
+        const inputField = document.getElementById('docNameInput');
+        const docName = inputField.value.trim();
+
+        if (docName === "") {
+            alert("Please enter a valid document name.");
+            return;
+        }
+
+        const newJob = { id: nextJobId++, name: docName };
+        printQueue.push(newJob); // Enqueue operation
+        inputField.value = '';
+        updateDisplay();
+    }
+
+    function processJob() {
+        if (printQueue.length === 0) {
+            alert("Queue is empty! No print jobs to process.");
+            return;
+        }
+
+        const processed = printQueue.shift(); // Dequeue operation (FIFO)
+        alert(`Successfully printed: Job #${processed.id} - "${processed.name}"`);
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        const listElement = document.getElementById('jobList');
+        const countElement = document.getElementById('count');
+
+        countElement.innerText = printQueue.length;
+
+        if (printQueue.length === 0) {
+            listElement.innerHTML = '<li style="color: #888; justify-content: center;">No print jobs in queue.</li>';
+            return;
+        }
+
+        let htmlContent = '';
+        for (let i = 0; i < printQueue.length; i++) {
+            let positionBadge = (i === 0) ? '<span style="background:#003366; color:white; padding:2px 8px; border-radius:3px; font-size:12px;">FRONT (Next to Print)</span>' : `<span style="color:#666; font-size:12px;">Position ${i+1}</span>`;
+            htmlContent += `<li><span><strong>Job #${printQueue[i].id}</strong>: ${printQueue[i].name}</span> ${positionBadge}</li>`;
+        }
+
+        listElement.innerHTML = htmlContent;
+    }
+</script>
+
+</body>
+</html>
